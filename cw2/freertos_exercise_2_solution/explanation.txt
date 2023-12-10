@@ -1,0 +1,1 @@
+The program has two tasks, task1 turns the LED on and task2 turns it off. The problem is that they both execute at the same time with the same interval. what happens is, seeing as task1 is executed first immediately followed by task2, the LED very quickly flashes for a fraction of a second (hard to see).
