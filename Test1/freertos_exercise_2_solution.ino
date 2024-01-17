@@ -26,40 +26,34 @@ void setup()
   xHandle_B = xTaskCreateStatic(led_OFF, "LED OFF Task", STACK_SIZE, NULL, 1, xStack_B, &xTaskBuffer_B);
 }
 
+// Turn on the LED
+// Wait for ON duration
+// Notify the other task to turn off the LED
+// Wait for the notification to turn back on
 void led_ON(void *pvParameters)
 {
   while (1)
   {
-    // Turn on the LED
     digitalWrite(LED_BUILTIN, HIGH);
     SERIAL_PORT.println("LED ON!");
-
-    // Wait for ON duration
     vTaskDelay(pdMS_TO_TICKS(BLINK_ON_TIME));
-
-    // Notify the other task to turn off the LED
     xTaskNotifyGive(xHandle_B);
-    
-    // Wait for the notification to turn back on
     ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
   }
 }
 
+// Wait for the notification to turn off the LED
+// Turn off the LED
+// Wait for OFF duration
+// Notify the other task to turn on the LED
 void led_OFF(void *pvParameters)
 {
   while (1)
   {
-    // Wait for the notification to turn off the LED
     ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
-
-    // Turn off the LED
     SERIAL_PORT.println("LED OFF!");
     digitalWrite(LED_BUILTIN, LOW);
-
-    // Wait for OFF duration
     vTaskDelay(pdMS_TO_TICKS(BLINK_OFF_TIME));
-
-    // Notify the other task to turn on the LED
     xTaskNotifyGive(xHandle_A);
   }
 }
